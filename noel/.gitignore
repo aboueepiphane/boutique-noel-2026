@@ -1,0 +1,19 @@
+# Dépendances installées : se réinstallent avec npm install
+node_modules/
+
+# Site fabriqué : GitHub le reconstruit à chaque envoi, inutile de l'envoyer
+dist/
+
+# Fichiers temporaires des contrôles
+node_modules/.tmp-*.cjs
+
+# Système et éditeurs
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Variables locales éventuelles
+.env
+.env.local

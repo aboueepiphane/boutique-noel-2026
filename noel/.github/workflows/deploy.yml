@@ -1,0 +1,78 @@
+# Fabrique la boutique et la publie sur GitHub Pages à chaque envoi sur « main ».
+#
+# À faire une seule fois sur GitHub, sinon ce fichier ne sert à rien :
+#   dépôt → Settings → Pages → Build and deployment → Source : « GitHub Actions »
+#
+# Ensuite, chaque « git push » met la boutique à jour en deux ou trois minutes.
+
+name: Publier la boutique
+
+on:
+  push:
+    branches: [main]
+  # permet aussi de relancer la publication à la main depuis l'onglet Actions
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Une seule publication à la fois ; un nouvel envoi annule celle en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  fabriquer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      # ── Garde-fous : si l'un échoue, rien n'est publié et la boutique
+      #    en ligne reste celle de la version précédente.
+      #    Pour publier malgré tout, mettre « continue-on-error: true »
+      #    sous l'étape concernée.
+      - name: Contrôler le code
+        run: npm run typecheck
+
+      - name: Contrôler le rendu des pages et des ancres
+        run: npm run rendu
+
+      # ── Informatif : s'affiche dans le journal, ne bloque jamais.
+      - name: Rappeler les adresses des épingles
+        run: npm run ancres
+        continue-on-error: true
+
+      - name: Faire le point sur le catalogue et les liens Amazon
+        run: npm run conformite
+        continue-on-error: true
+
+      - name: Fabriquer le site
+        run: npm run build
+
+      - name: Préparer la publication
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publier:
+    needs: fabriquer
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publication.outputs.page_url }}
+    steps:
+      - name: Mettre en ligne
+        id: publication
+        uses: actions/deploy-pages@v4

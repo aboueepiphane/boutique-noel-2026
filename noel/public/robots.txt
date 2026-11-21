@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Remplacer l'adresse par celle de la boutique une fois en ligne.
+Sitemap: https://aboueepiphane.github.io/boutique-noel-2026/sitemap.xml
