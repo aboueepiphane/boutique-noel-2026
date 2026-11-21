@@ -18,7 +18,7 @@ export const SITE_URL = 'https://aboueepiphane.github.io/boutique-noel-2026'
  * Identifiant Partenaires Amazon (SiteStripe → « votre-id-21 »).
  * Sans lui, aucun clic n'est rémunéré : à remplir en premier.
  */
-export const AMAZON_TAG = 'votre-id-21'
+export const AMAZON_TAG = '	noelmerveille-21'
 
 /** Domaine Amazon visé : amazon.fr pour la France. */
 export const AMAZON_HOST = 'www.amazon.fr'
